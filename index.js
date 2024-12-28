@@ -44,8 +44,8 @@ import messageRoute from "./message.js";
 import "dotenv/config";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-import http from "http";
-import { Server } from "socket.io";
+// import http from "http";
+// import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();

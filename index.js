@@ -49,8 +49,6 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server);
 
 
 
@@ -85,29 +83,29 @@ let connectDb = async () => {
 
 connectDb();
 
-// Socket.io Connection Logic
-io.on("connection", (socket) => {
-  console.log("A user connected: " + socket.id);
+// // Socket.io Connection Logic
+// io.on("connection", (socket) => {
+//   console.log("A user connected: " + socket.id);
 
-  // Join a room when a user connects (based on user ID)
-  socket.on("join-room", (userId) => {
-    socket.join(userId);
-    console.log(`User ${userId} joined the room: ${socket.id}`);
-  });
+//   // Join a room when a user connects (based on user ID)
+//   socket.on("join-room", (userId) => {
+//     socket.join(userId);
+//     console.log(`User ${userId} joined the room: ${socket.id}`);
+//   });
 
-  // Listen for a message and emit it to the receiver's room
-  socket.on("send-message", (messageData) => {
-    console.log("Message received: ", messageData);
-    // Emit the message to the specific user (receiverId)
-    io.to(messageData.receiverId).emit("receive-message", messageData);
-  });
+//   // Listen for a message and emit it to the receiver's room
+//   socket.on("send-message", (messageData) => {
+//     console.log("Message received: ", messageData);
+//     // Emit the message to the specific user (receiverId)
+//     io.to(messageData.receiverId).emit("receive-message", messageData);
+//   });
 
-  // Handle user disconnection
-  socket.on("disconnect", () => {
-    console.log("User disconnected: " + socket.id);
-  });
-});
+//   // Handle user disconnection
+//   socket.on("disconnect", () => {
+//     console.log("User disconnected: " + socket.id);
+//   });
+// });
 
-server.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });

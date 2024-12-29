@@ -54,7 +54,7 @@ const app = express();
 
 
 
-app.use(cors("http://localhost:8081"))
+app.use(cors())
 app.use(cookieParser());
 app.use(express.json());
 

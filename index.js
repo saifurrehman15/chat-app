@@ -49,10 +49,12 @@ import cookieParser from "cookie-parser";
 // import http from "http";
 // import { Server } from "socket.io";
 import cors from "cors";
-const cors = require("cors");
+
 const app = express();
 
-app.use(cors());
+
+
+app.use(cors())
 app.use(cookieParser());
 app.use(express.json());
 

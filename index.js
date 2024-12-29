@@ -52,9 +52,13 @@ import cors from "cors";
 
 const app = express();
 
+const corsConfig = {
+  origin: "*",
+  Credential: true,
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
 
-
-app.use(cors())
+app.use(cors(corsConfig));
 app.use(cookieParser());
 app.use(express.json());
 

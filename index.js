@@ -41,6 +41,8 @@ import loginRoute from "./auth/login.js";
 import signupRoute from "./auth/signup.js";
 import ContactRoute from "./contacts.js";
 import messageRoute from "./message.js";
+import lastMsgRoute from "./lastMsg.js";
+
 import "dotenv/config";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
@@ -64,6 +66,7 @@ app.use("/auth/login", loginRoute);
 app.use("/auth/signup", signupRoute);
 app.use("/contacts", ContactRoute);
 app.use("/message", messageRoute);
+app.use("/lastMsg", lastMsgRoute);
 
 let connectDb = async () => {
   try {

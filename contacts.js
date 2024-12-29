@@ -60,37 +60,66 @@ router.post("/", async (req, res) => {
     contactName: obj.contacts.contactName,
   };
 
+  let newContact = new ContactModal({
+    userId: obj.userId,
+    contacts: [newAddContact],
+  });
   if (!alreadyContact) {
+    newContact = await newContact.save();
+    // return res.status(200).json({
+    //   error: false,
+    //   msg: "Contact created successfully",
+    //   contact: newContact,
+    // });
+  } else {
+    alreadyContact.contacts.push({
+      personId: userAvailable._id,
+      phone: obj.contacts.phone,
+      contactName: obj.contacts.contactName,
+    });
+
+    await alreadyContact.save();
+  }
+
+  let alreadyContactReverse = await ContactModal.findOne({
+    userId: userAvailable._id,
+  });
+  let user2 = await userModal.findOne({
+    _id: obj.userId,
+  });
+
+  console.log(alreadyContactReverse);
+
+  if (!alreadyContactReverse) {
+    let newAddContact = {
+      personId: obj.userId,
+      phone: user2.phone,
+    };
+
     let newContact = new ContactModal({
-      userId: obj.userId,
+      userId: userAvailable._id,
       contacts: [newAddContact],
     });
 
     newContact = await newContact.save();
-    return res.status(200).json({
-      error: false,
-      msg: "Contact created successfully",
-      contact: newContact,
+    console.log("saved yes");
+  } else {
+    alreadyContactReverse.contacts.push({
+      personId: obj.userId,
+      phone: user2.phone,
     });
+
+    await alreadyContactReverse.save();
   }
-
-  alreadyContact.contacts.push({
-    personId: userAvailable._id,
-    phone: obj.contacts.phone,
-    contactName: obj.contacts.contactName,
-  });
-
-  await alreadyContact.save();
 
   return res.status(200).json({
     error: false,
     msg: "Contact added successfully",
-    contact: alreadyContact,
   });
 });
 
 router.get("/", async (req, res) => {
-  let contacts = await ContactModal.findOne({userId:req.query.id});
+  let contacts = await ContactModal.findOne({ userId: req.query.id });
 
   if (!contacts) {
     return res.status(404).json({

@@ -45,10 +45,16 @@ router.post("/", async (req, res) => {
 
     let newUser = new userModal({ ...newObj });
     newUser = await newUser.save();
+    console.log(newUser._id);
 
-    const token = jwt.sign(newUser , process.env.JWT_KEY);
-
-    // res.cookie("token", token, { secure: true, httpOnly: true });
+    const token = jwt.sign(
+      {
+        _id:newObj._id,
+        phone: newObj.phone,
+      },
+      process.env.JWT_KEY
+    );
+console.log(token);
 
     return res.status(200).json({
       error: false,

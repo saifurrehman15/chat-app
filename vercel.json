@@ -1,6 +1,6 @@
 { 
     "version": 2, 
-    "name": "Blogging-App", 
+    "name": "chat-App", 
     "builds": [ 
        { "src": "index.js", "use": "@vercel/node" } 
     ], 

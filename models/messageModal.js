@@ -35,4 +35,4 @@ const messageSchema = new Schema(
 );
 
 export const MessageModal =
-  mongoose.models.message || mongoose.model("message", messageSchema);
+  mongoose.models.messages || mongoose.model("messages", messageSchema);

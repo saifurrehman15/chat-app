@@ -34,7 +34,7 @@ const updateLastMsg = async (message) => {
 
 router.post("/", async (req, res) => {
   const obj = req.body;
-  console.log(obj);
+  console.log(obj.senderId);
 
   if (!obj.senderId || !obj.receiverId || !obj.message) {
     return res.status(400).json({
@@ -97,7 +97,7 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const { sId, rId, page = 1, limit = 20 } = req.query;
+    const { sId, rId, page = 1 } = req.query;
 
     console.log("Sender ID:", sId, "Receiver ID:", rId);
 
@@ -109,9 +109,7 @@ router.get("/", async (req, res) => {
     }
 
     const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
 
-    const skip = (pageNum - 1) * limitNum;
 
     const messages = await MessageModal.find({
       $or: [
@@ -120,8 +118,6 @@ router.get("/", async (req, res) => {
       ],
     })
       .sort({ createdAt: 1 })
-      .skip(skip)
-      .limit(limitNum);
 
     console.log(messages);
 

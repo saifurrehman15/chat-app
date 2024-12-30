@@ -42,19 +42,23 @@ import signupRoute from "./auth/signup.js";
 import ContactRoute from "./contacts.js";
 import messageRoute from "./message.js";
 import lastMsgRoute from "./lastMsg.js";
-
 import "dotenv/config";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-// import http from "http";
-// import { Server } from "socket.io";
+import http from "http";
+import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();
-
+let server = http.createServer(app);
+let io = new Server(server, {
+  cors: {
+    origin: "http://localhost:8081",
+    methods: ["GET", "POST"],
+  },
+});
 const corsConfig = {
-  origin: "*",
-  Credential: true,
+  origin: "http://localhost:8081",
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 app.options("", cors(corsConfig));
@@ -90,29 +94,17 @@ let connectDb = async () => {
 
 connectDb();
 
-// // Socket.io Connection Logic
-// io.on("connection", (socket) => {
-//   console.log("A user connected: " + socket.id);
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+  socket.on('user-message', (data) => {
+    console.log('Broadcasting message:', data);
+    io.emit('user-message', data);
+  });
+  // socket.on('disconnect', () => {
+  //   console.log('A user disconnected:', socket.id);
+  // });
+});
 
-//   // Join a room when a user connects (based on user ID)
-//   socket.on("join-room", (userId) => {
-//     socket.join(userId);
-//     console.log(`User ${userId} joined the room: ${socket.id}`);
-//   });
-
-//   // Listen for a message and emit it to the receiver's room
-//   socket.on("send-message", (messageData) => {
-//     console.log("Message received: ", messageData);
-//     // Emit the message to the specific user (receiverId)
-//     io.to(messageData.receiverId).emit("receive-message", messageData);
-//   });
-
-//   // Handle user disconnection
-//   socket.on("disconnect", () => {
-//     console.log("User disconnected: " + socket.id);
-//   });
-// });
-
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });

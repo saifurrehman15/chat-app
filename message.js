@@ -108,7 +108,6 @@ router.get("/", async (req, res) => {
       });
     }
 
-    const pageNum = parseInt(page);
 
 
     const messages = await MessageModal.find({

@@ -75,7 +75,7 @@ app.use("/auth/signup", signupRoute);
 app.use("/contacts", ContactRoute);
 app.use("/message", messageRoute);
 app.use("/lastMsg", lastMsgRoute);
-// app
+
 let connectDb = async () => {
   try {
     let connection = null;

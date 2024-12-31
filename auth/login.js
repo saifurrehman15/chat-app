@@ -1,6 +1,6 @@
 import express from "express";
 import { userModal } from "../models/userModal.js";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const router = express();
@@ -18,13 +18,13 @@ router.post("/", async (req, res) => {
     });
   }
 
-  let unHashedPass = await bcrypt.compare(obj.pin, userExist.pin);
-  if (!unHashedPass) {
-    return res.status(404).json({
-      error: true,
-      msg: "Pin is incorrect",
-    });
-  }
+  // let unHashedPass = await bcrypt.compare(obj.pin, userExist.pin);
+  // if (!unHashedPass) {
+  //   return res.status(404).json({
+  //     error: true,
+  //     msg: "Pin is incorrect",
+  //   });
+  // }
 
   let token = jwt.sign(userExist, process.env.JWT_KEY);
 

@@ -1,6 +1,6 @@
 import express from "express";
 import Joi from "joi";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userModal } from "../models/userModal.js";
 
@@ -40,8 +40,8 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const hashed = await bcrypt.hash(newObj.pin, 12);
-    newObj.pin = hashed;
+    // const hashed = await bcrypt.hash(newObj.pin, 12);
+    // newObj.pin = hashed;
 
     let newUser = new userModal({ ...newObj });
     newUser = await newUser.save();

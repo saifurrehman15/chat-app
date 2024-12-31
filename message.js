@@ -108,15 +108,13 @@ router.get("/", async (req, res) => {
       });
     }
 
-
-// chat-app
+    // chat-app
     const messages = await MessageModal.find({
       $or: [
         { senderId: sId, receiverId: rId },
         { senderId: rId, receiverId: sId },
       ],
-    })
-      .sort({ createdAt: 1 })
+    }).sort({ createdAt: 1 });
 
     console.log(messages);
 
@@ -161,19 +159,22 @@ router.put("/", async (req, res) => {
     message,
   });
 });
+  // obj.deleteType.msg === "delete for me"
+  //   ? await MessageModal.findOneAndUpdate(
+  //       { _id: obj.id },
+  //       { deleteType: { msg: obj.deleteType.msg, deleteId: obj.deleteType.deleteId } }
+  //     )
+  //   :
+
 
 router.delete("/", async (req, res) => {
   let obj = req.body;
-  console.log(obj.deleteType);
-  let message =
-    obj.deleteType.msg === "delete for me"
-      ? await MessageModal.findOneAndUpdate(
-          { _id: obj.id },
-          { deleteType: { msg: obj.deleteType.msg, deleteId: obj.deleteType.deleteId } }
-        )
-      : await MessageModal.findOneAndDelete({ _id: obj.id });
-
-  await updateLastMsg(message);
+  let message ;
+  console.log(obj.id);
+  for (let i = 0; i < obj.id.length; i++) {
+    message =await MessageModal.findOneAndDelete({ _id: obj.id[i] });
+    // await updateLastMsg(message);
+  }
 
   if (!message) {
     return res.status(404).json({

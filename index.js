@@ -100,9 +100,10 @@ io.on('connection', (socket) => {
     console.log('Broadcasting message:', data);
     io.emit('user-message', data);
   });
-  // socket.on('disconnect', () => {
-  //   console.log('A user disconnected:', socket.id);
-  // });
+  socket.on('disconnect', () => {
+    console.log('A user disconnected:', socket.id);
+  });
+  
 });
 
 server.listen(process.env.PORT, () => {

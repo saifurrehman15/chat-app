@@ -45,23 +45,23 @@ import lastMsgRoute from "./lastMsg.js";
 import "dotenv/config";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
-import http from "http";
-import { Server } from "socket.io";
+// import http from "http";
+// import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();
-let server = http.createServer(app);
-let io = new Server(server, {
-  cors: {
-    origin: "http://localhost:8081",
-    methods: ["GET", "POST"],
-  },
-});
-const corsConfig = {
-  origin: "http://localhost:8081",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-};
-app.options("", cors(corsConfig));
+// let server = http.createServer(app);
+// let io = new Server(server, {
+//   cors: {
+//     origin: "http://localhost:8081",
+//     methods: ["GET", "POST"],
+//   },
+// });
+// const corsConfig = {
+//   origin: "http://localhost:8081",
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+// };
+// app.options("", cors(corsConfig));
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
@@ -94,18 +94,18 @@ let connectDb = async () => {
 
 connectDb();
 
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-  socket.on('user-message', (data) => {
-    console.log('Broadcasting message:', data);
-    io.emit('user-message', data);
-  });
-  socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
-  });
+// io.on('connection', (socket) => {
+//   console.log('A user connected:', socket.id);
+//   socket.on('user-message', (data) => {
+//     console.log('Broadcasting message:', data);
+//     io.emit('user-message', data);
+//   });
+//   socket.on('disconnect', () => {
+//     console.log('A user disconnected:', socket.id);
+//   });
   
-});
+// });
 
-server.listen(process.env.PORT, () => {
+app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });

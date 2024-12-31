@@ -17,9 +17,12 @@ const userValidation = Joi.object({
 
 router.post("/", async (req, res) => {
   let obj = req.body;
+console.log(obj.phone,obj.pin);
 
   const { error, value } = userValidation.validate(obj);
   if (error) {
+    console.log(error.details);
+    
     const errorMsg = error.details.some((e) => e.path.includes("phone"))
       ? "Phone number should be exactly 11 digits"
       : "PIN should be exactly 6 digits";

@@ -51,18 +51,19 @@ import cors from "cors";
 
 const app = express();
 let server = http.createServer(app);
-let io = new Server(server, {
-  cors: {
-    origin: "http://localhost:8081",
-    methods: ["GET", "POST"],
-  },
-});
-const corsConfig = {
-  origin: "http://localhost:8081",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-};
-app.options("", cors(corsConfig));
-app.use(cors(corsConfig));
+let io = new Server(server);
+// //, {
+//   cors: {
+//     origin: "http://localhost:8081",
+//     methods: ["GET", "POST"],
+//   },
+// }
+// const corsConfig = {
+//   origin: "http://localhost:8081",
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+// };
+// app.options("", cors(corsConfig));
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 

@@ -51,22 +51,21 @@ import cors from "cors";
 
 const app = express();
 let server = http.createServer(app);
-let io = new Server(server);
-// //, {
-//   cors: {
-//     origin: "http://localhost:8081",
-//     methods: ["GET", "POST"],
-//   },
-// }
-// const corsConfig = {
-//   origin: "http://localhost:8081",
-//   methods: ["GET", "POST", "PUT", "DELETE"],
-// };
-// app.options("", cors(corsConfig));
+let io = new Server(server, {
+  cors: {
+    origin: "http://localhost:8081",
+    methods: ["GET", "POST"],
+  },
+});
+const corsConfig = {
+  origin: "http://localhost:8081",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
+app.options("", cors(corsConfig));
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
-// add
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -76,7 +75,7 @@ app.use("/auth/signup", signupRoute);
 app.use("/contacts", ContactRoute);
 app.use("/message", messageRoute);
 app.use("/lastMsg", lastMsgRoute);
-
+// app
 let connectDb = async () => {
   try {
     let connection = null;

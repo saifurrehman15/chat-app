@@ -58,12 +58,12 @@ const app = express();
 //     methods: ["GET", "POST"],
 //   },
 // });
-// const corsConfig = {
-//   origin: "http://localhost:8081",
-//   methods: ["GET", "POST", "PUT", "DELETE"],
-// };
+const corsConfig = {
+  origin: "http://localhost:8081",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+};
 // app.options("", cors(corsConfig));
-app.use(cors());
+app.use(cors(corsConfig));
 app.use(cookieParser());
 app.use(express.json());
 

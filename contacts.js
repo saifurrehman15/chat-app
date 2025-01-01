@@ -40,7 +40,7 @@ router.post("/", async (req, res) => {
   if (contactExist) {
     return res.status(404).json({
       error: true,
-      msg: "This contact already exists",
+      msg: "This contact is already exists",
     });
   }
 

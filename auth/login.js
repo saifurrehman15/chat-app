@@ -2,7 +2,6 @@ import express from "express";
 import { userModal } from "../models/userModal.js";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 
 const router = express();
 

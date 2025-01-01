@@ -45,6 +45,7 @@ import lastMsgRoute from "./lastMsg.js";
 import "dotenv/config";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
+import userRoute from "./auth/users.js"
 // import http from "http";
 // import { Server } from "socket.io";
 import cors from "cors";
@@ -72,6 +73,8 @@ app.get("/", (req, res) => {
 
 app.use("/auth/login", loginRoute);
 app.use("/auth/signup", signupRoute);
+app.use("/auth/users", userRoute);
+
 app.use("/contacts", ContactRoute);
 app.use("/message", messageRoute);
 app.use("/lastMsg", lastMsgRoute);

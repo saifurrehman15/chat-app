@@ -1,8 +1,9 @@
 import express from "express";
 import Joi from "joi";
-// import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { userModal } from "../models/userModal.js";
+import { authenticateUser } from "../middleware/auth.js";
 
 const router = express();
 
@@ -17,12 +18,12 @@ const userValidation = Joi.object({
 
 router.post("/", async (req, res) => {
   let obj = req.body;
-console.log(obj.phone,obj.pin);
+  console.log(obj);
 
   const { error, value } = userValidation.validate(obj);
   if (error) {
     console.log(error.details);
-    
+
     const errorMsg = error.details.some((e) => e.path.includes("phone"))
       ? "Phone number should be exactly 11 digits"
       : "PIN should be exactly 6 digits";
@@ -43,26 +44,27 @@ console.log(obj.phone,obj.pin);
       });
     }
 
-    // const hashed = await bcrypt.hash(newObj.pin, 12);
-    // newObj.pin = hashed;
+    const hashed = await bcrypt.hash(newObj.pin, 12);
+    newObj.pin = hashed;
 
     let newUser = new userModal({ ...newObj });
     newUser = await newUser.save();
-    console.log(newUser._id);
+    console.log(newUser);
+    let tokenObj = {
+      _id: newUser._id,
+      phone: newUser.phone,
+      isOnline: newUser.isOnline,
+    };
+    console.log(tokenObj);
 
-    const token = jwt.sign(
-      {
-        _id:newObj._id,
-        phone: newObj.phone,
-      },
-      process.env.JWT_KEY
-    );
-console.log(token);
+    const token = jwt.sign({ ...tokenObj }, process.env.JWT_KEY);
+    console.log(token);
 
     return res.status(200).json({
       error: false,
       msg: "The user was created successfully",
-      user: { newUser, token },
+      user:newUser,
+      token,
     });
   } catch (err) {
     console.error("server error", err);
@@ -73,9 +75,5 @@ console.log(token);
   }
 });
 
-// router.get('/',(req,res)=>{
-
-//     res.send("hy")
-// })
 
 export default router;

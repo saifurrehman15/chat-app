@@ -1,6 +1,6 @@
 import express from "express";
 import { userModal } from "../models/userModal.js";
-// import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const router = express();
@@ -18,30 +18,31 @@ router.post("/", async (req, res) => {
     });
   }
 
-  // let unHashedPass = await bcrypt.compare(obj.pin, userExist.pin);
-  // if (!unHashedPass) {
-  //   return res.status(404).json({
-  //     error: true,
-  //     msg: "Pin is incorrect",
-  //   });
-  // }
+  let unHashedPass = await bcrypt.compare(obj.pin, userExist.pin);
+  if (!unHashedPass) {
+    return res.status(404).json({
+      error: true,
+      msg: "Pin is incorrect",
+    });
+  }
+  let tokenObj = {
+    _id: userExist._id,
+    phone: userExist.phone,
+    isOnline: userExist.isOnline,
+  };
+  console.log(tokenObj._id);
 
-  let token = jwt.sign(userExist, process.env.JWT_KEY);
+  let token = jwt.sign({ ...tokenObj }, process.env.JWT_KEY);
 
   console.log("token=>", token);
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    maxAge: 3600000,
-  });
 
   console.log("Token cookie set successfully");
 
   return res.status(200).json({
     error: false,
     msg: "User Login Successfully",
-    data: { user: userExist, token },
+    user: userExist,
+    token,
   });
 });
 

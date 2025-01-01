@@ -1,19 +1,25 @@
-import jwt from "jsonwebtoken";
-import sendResponse from "../helpers/sendResponse.js";
-import "dotenv/config";
-
+import jwt from "jsonwebtoken"
 export function authenticateUser(req, res, next) {
-  const bearerTOken = req.headers?.authorization;
-  console.log("bearerTOken=>", bearerTOken);
-  if (!bearerTOken)
-    return sendResponse(res, 400, null, true, "Token Not Provided");
+  const bearerToken = req.headers?.authorization;
+console.log(req.user,res.user);
 
-  const token = bearerTOken.split(" ")[1];
+  if (!bearerToken) {
+    return res.status(400).json({
+      error: true,
+      msg: "Token Not Provided",
+    });
+  }
 
-  const decoded = jwt.verify(token, process.env.AUTH_SECRET);
-
-  req.user = decoded;
-  console.log("decoded=>", decoded);
-  next();
+  const token = bearerToken.split(" ")[1];
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    console.log("Decoded JWT: ", decoded); 
+    res.status(200).json({user : decoded});
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      error: true,
+      msg: "Invalid or expired token",
+    });
+  }
 }
-

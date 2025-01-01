@@ -1,7 +1,8 @@
 import express from "express";
 import { userModal } from "../models/userModal.js";
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const router = express();
 
@@ -18,32 +19,42 @@ router.post("/", async (req, res) => {
     });
   }
 
-  let unHashedPass = await bcrypt.compare(obj.pin, userExist.pin);
-  if (!unHashedPass) {
-    return res.status(404).json({
+  try {
+    let isValidPin = await argon2.verify(userExist.pin, obj.pin);
+    console.log(isValidPin);
+    
+    if (!isValidPin) {
+      return res.status(404).json({
+        error: true,
+        msg: "Pin is incorrect",
+      });
+    }
+
+    let tokenObj = {
+      _id: userExist._id,
+      phone: userExist.phone,
+      isOnline: userExist.isOnline,
+    };
+    console.log(tokenObj._id);
+
+    let token = jwt.sign({ ...tokenObj }, process.env.JWT_KEY);
+
+    console.log("token=>", token);
+    console.log("Token cookie set successfully");
+
+    return res.status(200).json({
+      error: false,
+      msg: "User Login Successfully",
+      user: userExist,
+      token,
+    });
+  } catch (err) {
+    console.error("Error during Argon2 verification:", err.message);
+    return res.status(500).json({
       error: true,
-      msg: "Pin is incorrect",
+      msg: "Internal Server Error",
     });
   }
-  let tokenObj = {
-    _id: userExist._id,
-    phone: userExist.phone,
-    isOnline: userExist.isOnline,
-  };
-  console.log(tokenObj._id);
-
-  let token = jwt.sign({ ...tokenObj }, process.env.JWT_KEY);
-
-  console.log("token=>", token);
-
-  console.log("Token cookie set successfully");
-
-  return res.status(200).json({
-    error: false,
-    msg: "User Login Successfully",
-    user: userExist,
-    token,
-  });
 });
 
 router.get("/", (req, res) => {

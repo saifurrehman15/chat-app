@@ -1,9 +1,9 @@
 import express from "express";
 import Joi from "joi";
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { userModal } from "../models/userModal.js";
-import { authenticateUser } from "../middleware/auth.js";
+// import { authenticateUser } from "../middleware/auth.js";
 
 const router = express();
 
@@ -44,12 +44,13 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const hashed = await bcrypt.hash(newObj.pin, 12);
+    const hashed = await argon2.hash(newObj.pin);
     newObj.pin = hashed;
 
     let newUser = new userModal({ ...newObj });
     newUser = await newUser.save();
     console.log(newUser);
+
     let tokenObj = {
       _id: newUser._id,
       phone: newUser.phone,
@@ -63,7 +64,7 @@ router.post("/", async (req, res) => {
     return res.status(200).json({
       error: false,
       msg: "The user was created successfully",
-      user:newUser,
+      user: newUser,
       token,
     });
   } catch (err) {
@@ -74,6 +75,5 @@ router.post("/", async (req, res) => {
     });
   }
 });
-
 
 export default router;

@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const ContactSchema = new Schema(
   {
-    userId: { type: mongoose.Types.ObjectId, ref: "users" },
+    userId: String,
     contacts: [
       {
         personId:String,

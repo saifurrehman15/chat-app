@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     if (!isValidPin) {
       return res.status(404).json({
         error: true,
-        msg: "Pin is incorrect",
+        msg: "Credientials are incorrect",
       });
     }
 
@@ -49,7 +49,7 @@ router.post("/", async (req, res) => {
     });
   } catch (err) {
     console.error("Error during Argon2 verification:", err.message);
-    return res.status(500).json({
+    return res.status(504).json({
       error: true,
       msg: "Internal Server Error",
     });

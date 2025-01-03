@@ -19,7 +19,7 @@ console.log(req.user,res.user);
   } catch (err) {
     return res.status(401).json({
       error: true,
-      msg: "Invalid or expired token",
+      msg: "Token is incorrect",
     });
   }
 }

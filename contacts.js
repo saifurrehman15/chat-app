@@ -28,6 +28,7 @@ router.post("/", async (req, res) => {
   console.log(obj);
 
   let contactExist = await ContactModal.findOne({
+    userId: obj.userId,
     "contacts.phone": obj.contacts.phone,
   });
 

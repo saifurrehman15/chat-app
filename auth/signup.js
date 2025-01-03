@@ -3,7 +3,6 @@ import Joi from "joi";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { userModal } from "../models/userModal.js";
-// import { authenticateUser } from "../middleware/auth.js";
 
 const router = express();
 
@@ -18,8 +17,7 @@ const userValidation = Joi.object({
 
 router.post("/", async (req, res) => {
   let obj = req.body;
-  console.log(obj);
-
+  
   const { error, value } = userValidation.validate(obj);
   if (error) {
     console.log(error.details);
@@ -51,19 +49,19 @@ router.post("/", async (req, res) => {
     newUser = await newUser.save();
     console.log(newUser);
 
-    let tokenObj = {
+    let resObj = {
       _id: newUser._id,
       phone: newUser.phone,
       isOnline: newUser.isOnline,
     };
     console.log(tokenObj);
 
-    const token = jwt.sign({ ...tokenObj }, process.env.JWT_KEY);
-    console.log(token);
+    const token = jwt.sign({ ...resObj }, process.env.JWT_KEY);
+    console.log("User Token =>", token);
 
     return res.status(200).json({
       error: false,
-      msg: "The user was created successfully",
+      msg: "User created successfully",
       user: newUser,
       token,
     });
@@ -71,7 +69,7 @@ router.post("/", async (req, res) => {
     console.error("server error", err);
     return res.status(500).json({
       error: true,
-      msg: "An unexpected error occurred. Please try again later.",
+      msg: "Internal Server Error",
     });
   }
 });

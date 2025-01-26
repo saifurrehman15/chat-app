@@ -108,7 +108,6 @@ router.get("/", async (req, res) => {
       });
     }
 
-    // chat-app
     const messages = await MessageModal.find({
       $or: [
         { senderId: sId, receiverId: rId },

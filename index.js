@@ -46,23 +46,23 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import userRoute from "./auth/users.js"
-// import http from "http";
-// import { Server } from "socket.io";
+import http from "http";
+import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();
-// let server = http.createServer(app);
-// let io = new Server(server, {
-//   cors: {
-//     origin: "http://localhost:8081",
-//     methods: ["GET", "POST"],
-//   },
-// });
+let server = http.createServer(app);
+let io = new Server(server, {
+  cors: {
+    origin: "http://localhost:8081",
+    methods: ["GET", "POST"],
+  },
+});
 const corsConfig = {
   origin: "http://localhost:8081",
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
-// app.options("", cors(corsConfig));
+app.options("", cors(corsConfig));
 app.use(cors(corsConfig));
 app.use(cookieParser());
 app.use(express.json());
@@ -97,18 +97,18 @@ let connectDb = async () => {
 
 connectDb();
 
-// io.on('connection', (socket) => {
-//   console.log('A user connected:', socket.id);
-//   socket.on('user-message', (data) => {
-//     console.log('Broadcasting message:', data);
-//     io.emit('user-message', data);
-//   });
-//   socket.on('disconnect', () => {
-//     console.log('A user disconnected:', socket.id);
-//   });
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
+  socket.on('user-message', (data) => {
+    console.log('Broadcasting message:', data);
+    io.emit('user-message', data);
+  });
+  socket.on('disconnect', () => {
+    console.log('A user disconnected:', socket.id);
+  });
   
-// });
+});
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });

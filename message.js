@@ -104,7 +104,7 @@ router.get("/", async (req, res) => {
     if (!sId || !rId) {
       return res.status(400).json({
         error: true,
-        msg: "Sender and Receiver IDs are required",
+        msg: "Sender and Receive IDs are required",
       });
     }
 

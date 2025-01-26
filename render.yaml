@@ -6,7 +6,6 @@ services:
     startCommand: 'npm start'
     plan: free
     branch: main
-    pullRequestPreviews: true
     staticPublishPath: build
     autoDeploy: true
     envVars:

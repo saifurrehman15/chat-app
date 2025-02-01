@@ -63,7 +63,7 @@ const corsConfig = {
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 app.options("", cors(corsConfig));
-app.use(cors(corsConfig));
+app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
 

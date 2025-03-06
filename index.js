@@ -59,7 +59,7 @@ let io = new Server(server, {
   },
 });
 const corsConfig = {
-  origin: "http://localhost:8081",
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
 };
 app.options("", cors(corsConfig));

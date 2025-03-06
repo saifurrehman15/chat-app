@@ -54,7 +54,7 @@ const app = express();
 let server = http.createServer(app);
 let io = new Server(server, {
   cors: {
-    origin: "http://localhost:8081",
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });

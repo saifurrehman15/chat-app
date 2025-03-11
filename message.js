@@ -46,7 +46,6 @@ router.post("/", async (req, res) => {
   try {
     const mergeId = obj.senderId + obj.receiverId;
 
-    console.log("Merge ID:", mergeId);
 
     let lastMsg = await lastMsgModal.findOne({ mergeId });
     console.log("LastMsg found:", lastMsg);
@@ -60,7 +59,6 @@ router.post("/", async (req, res) => {
           updatedAt: Date.now(),
         }
       );
-      console.log("Last message updated");
     } else {
       const lastMsgSave = new lastMsgModal({
         mergeId,
@@ -70,7 +68,6 @@ router.post("/", async (req, res) => {
       });
 
       await lastMsgSave.save();
-      console.log("Last message entry created:", lastMsgSave);
     }
 
     const newMessage = new MessageModal({
@@ -107,15 +104,20 @@ router.get("/", async (req, res) => {
         msg: "Sender and Receive IDs are required",
       });
     }
+     await MessageModal.updateMany(
+       {receiverId:rId} ,
+      { isRead: true }
+    );
+
+    
 
     const messages = await MessageModal.find({
       $or: [
         { senderId: sId, receiverId: rId },
         { senderId: rId, receiverId: sId },
       ],
-    }).sort({ createdAt: 1 });
+    }).sort({ createdAt: 1 }).lean();
 
-    console.log(messages);
 
     res.status(200).json({
       error: false,
@@ -158,20 +160,19 @@ router.put("/", async (req, res) => {
     message,
   });
 });
-  // obj.deleteType.msg === "delete for me"
-  //   ? await MessageModal.findOneAndUpdate(
-  //       { _id: obj.id },
-  //       { deleteType: { msg: obj.deleteType.msg, deleteId: obj.deleteType.deleteId } }
-  //     )
-  //   :
-
+// obj.deleteType.msg === "delete for me"
+//   ? await MessageModal.findOneAndUpdate(
+//       { _id: obj.id },
+//       { deleteType: { msg: obj.deleteType.msg, deleteId: obj.deleteType.deleteId } }
+//     )
+//   :
 
 router.delete("/", async (req, res) => {
   let obj = req.body;
-  let message ;
+  let message;
   console.log(obj.id);
   for (let i = 0; i < obj.id.length; i++) {
-    message =await MessageModal.findOneAndDelete({ _id: obj.id[i] });
+    message = await MessageModal.findOneAndDelete({ _id: obj.id[i] });
     // await updateLastMsg(message);
   }
 

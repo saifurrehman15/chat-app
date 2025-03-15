@@ -46,7 +46,6 @@ router.post("/", async (req, res) => {
   try {
     const mergeId = obj.senderId + obj.receiverId;
 
-
     let lastMsg = await lastMsgModal.findOne({ mergeId });
     console.log("LastMsg found:", lastMsg);
 
@@ -94,9 +93,10 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const { sId, rId, page = 1 } = req.query;
-
+    const { sId, rId, cursor, page = 20 } = req.query;
+    let query = {};
     console.log("Sender ID:", sId, "Receiver ID:", rId);
+    if (cursor) query._id = { $lt: cursor };
 
     if (!sId || !rId) {
       return res.status(400).json({
@@ -104,25 +104,27 @@ router.get("/", async (req, res) => {
         msg: "Sender and Receive IDs are required",
       });
     }
-     await MessageModal.updateMany(
-       {receiverId:rId} ,
-      { isRead: true }
-    );
 
-    
+    await MessageModal.updateMany({ receiverId: rId }, { isRead: true });
 
     const messages = await MessageModal.find({
       $or: [
         { senderId: sId, receiverId: rId },
         { senderId: rId, receiverId: sId },
       ],
-    }).sort({ createdAt: 1 }).lean();
+    }).lean();
+    const cursor2 = await MessageModal.find(query)
+      .sort({ _id: -1 }) // Latest messages first
+      .limit(Number(page));
 
+    const newCursor = cursor2.length ? cursor2[cursor2.length - 1]._id : null;
+    console.log(cursor);
 
     res.status(200).json({
       error: false,
       msg: "Messages fetched successfully",
       messages,
+      newCursor
     });
   } catch (error) {
     console.error("Error fetching messages:", error);

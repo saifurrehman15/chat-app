@@ -2,6 +2,7 @@ import express from "express";
 import Joi from "joi";
 import { ContactModal } from "./models/contactModal.js";
 import { userModal } from "./models/userModal.js";
+import { MessageModal } from "./models/messageModal.js";
 
 const router = express();
 
@@ -67,11 +68,7 @@ router.post("/", async (req, res) => {
   });
   if (!alreadyContact) {
     newContact = await newContact.save();
-    // return res.status(200).json({
-    //   error: false,
-    //   msg: "Contact created successfully",
-    //   contact: newContact,
-    // });
+    
   } else {
     alreadyContact.contacts.push({
       personId: userAvailable._id,
@@ -120,20 +117,51 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  let contacts = await ContactModal.findOne({ userId: req.query.id });
+  try {
+    const { id } = req.query;
 
-  if (!contacts) {
-    return res.status(404).json({
-      error: true,
-      msg: "Contacts not found",
+    let contacts = await ContactModal.findOne({ userId: id });
+
+    if (!contacts) {
+      return res.status(404).json({
+        error: true,
+        msg: "Contacts not found",
+      });
+    }
+
+    let messages = await MessageModal.find({
+      $or: [{ senderId: id }, { receiverId: id }],
+      isRead: false,
     });
-  }
 
-  return res.status(200).json({
-    error: false,
-    msg: "Contacts fetched Successfully",
-    contacts,
-  });
+    console.log(messages);
+
+    let unreadCountMap = {};
+    messages.forEach((msg) => {
+      let contactId =
+        msg.senderId === id
+          ? msg.receiverId.toString()
+          : msg.senderId.toString();
+      unreadCountMap[contactId] = (unreadCountMap[contactId] || 0) + 1;
+    });
+
+    let sortedContacts = contacts.contacts
+      .map((contact) => ({
+        ...contact.toObject(),
+        unreadMessages: unreadCountMap[contact.personId] || 0,
+      }))
+      .sort((a, b) => b.unreadMessages - a.unreadMessages);
+
+    return res.status(200).json({
+      error: false,
+      msg: "Contacts sorted by unread messages",
+      userId: id,
+      contacts: sortedContacts,
+    });
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
+    return res.status(500).json({ error: true, msg: "Internal Server Error" });
+  }
 });
 
 router.put("/", async (req, res) => {

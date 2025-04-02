@@ -99,9 +99,6 @@ let connectDb = async () => {
   }
 };
 
-
-
-
 connectDb();
 
 io.on("connection", (socket) => {
@@ -110,6 +107,11 @@ io.on("connection", (socket) => {
     console.log("Broadcasting message:", data);
     io.emit("user-message", data);
   });
+
+  socket.on("typing-check", (data) => {
+    io.emit("typing-check", data);
+  });
+
   socket.on("disconnect", () => {
     console.log("A user disconnected:", socket.id);
   });
